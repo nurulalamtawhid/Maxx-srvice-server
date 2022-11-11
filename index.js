@@ -25,7 +25,15 @@ async function run(){
 
 
 
-        //api for services
+        //api for home services
+        app.get('/Homeservices', async(req,res)=>{
+            const query = {}
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.limit(3).toArray();
+            res.send(services)
+        
+        });
+        //api for services section
         app.get('/services', async(req,res)=>{
             const query = {}
             const cursor = serviceCollection.find(query);
