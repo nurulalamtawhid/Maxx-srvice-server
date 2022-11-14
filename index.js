@@ -16,11 +16,12 @@ app.use(express.json());
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_USER_KEY}@database1.wijxnwd.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 async function run(){
     try{
         const serviceCollection = client.db("maxxService").collection("Services");
+        const reviewCollection =  client.db("maxxService").collection("Reviews");
         //console.log(serviceCollection);
 
 
@@ -49,6 +50,25 @@ async function run(){
             const service = await serviceCollection.findOne(query);
             res.send(service);
         });
+        // api for review insertion
+        app.post('/reviews',async(req,res)=>{
+            const reviews = req.body;
+            const result  = await reviewCollection.insertOne(reviews);
+            res.send(result);
+        });
+        // api for get get review
+        app.get('serviceReview/:serviceId',async(req,res)=>{
+            console.log(req.params.serviceId);
+            const result = await reviewCollection.find({service:req.params.serviceId}).toArray();
+            res.send(result)
+        })
+        app.get('review',async(req,res)=>{
+            const query = {}
+            const cursor = reviewCollection.find(query);
+            const reviews = await cursor.toArray();
+            res.send(reviews)
+
+        })
 
     }
     finally{
