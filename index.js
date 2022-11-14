@@ -22,6 +22,7 @@ async function run(){
     try{
         const serviceCollection = client.db("maxxService").collection("Services");
         const reviewCollection =  client.db("maxxService").collection("Reviews");
+        
         //console.log(serviceCollection);
 
 
@@ -50,6 +51,12 @@ async function run(){
             const service = await serviceCollection.findOne(query);
             res.send(service);
         });
+        //api for addd service 
+        app.post('/addservices',async(req,res)=>{
+            const services = req.body;
+            const result = await serviceCollection.insertOne(services);
+            res.send(result);
+        })
         // api for review insertion
         app.post('/reviews',async(req,res)=>{
             const reviews = req.body;
@@ -57,12 +64,12 @@ async function run(){
             res.send(result);
         });
         // api for get get review
-        app.get('serviceReview/:serviceId',async(req,res)=>{
-            console.log(req.params.serviceId);
+        app.get('/serviceReview/:serviceId',async(req,res)=>{
+            //console.log(req.params.serviceId);
             const result = await reviewCollection.find({service:req.params.serviceId}).toArray();
             res.send(result)
         })
-        app.get('review',async(req,res)=>{
+        app.get('/review',async(req,res)=>{
             const query = {}
             const cursor = reviewCollection.find(query);
             const reviews = await cursor.toArray();
