@@ -69,13 +69,29 @@ async function run(){
             const result = await reviewCollection.find({service:req.params.serviceId}).toArray();
             res.send(result)
         })
+        //api for getting my review section throug mail address
         app.get('/review',async(req,res)=>{
-            const query = {}
+            let query = {};
+            console.log(req.query.email);
+            if(req.query.email){
+                query = {
+                    email : req.query.email
+                }
+            }
+
             const cursor = reviewCollection.find(query);
             const reviews = await cursor.toArray();
             res.send(reviews)
 
         })
+        //api for delete a item for my review
+        app.delete('/review/:id',async(req,res)=>{
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await reviewCollection.deleteOne(query);
+            res.send(result);
+        })
+
 
     }
     finally{
